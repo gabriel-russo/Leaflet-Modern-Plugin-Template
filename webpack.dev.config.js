@@ -11,6 +11,13 @@ module.exports = {
     filename: 'leaflet.myplugin.min.js',
     clean: true,
   },
+  experiments: {
+    outputModule: true,
+  },
+  externalsType: 'window',
+  externals: {
+    leaflet: 'L',
+  },
   module: {
     rules: [
       {
