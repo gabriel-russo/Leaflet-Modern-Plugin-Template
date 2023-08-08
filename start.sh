@@ -3,17 +3,23 @@
 echo "======================= CONFIGURATION ======================"
 echo "| Follow the steps to configure your template              |"
 echo "============================================================"
-read -p "Plugin Name (Ex.: mouseCoordinate): Leaflet." plugin_name
+read -p "Plugin Name (Ex.: Leaflet.mouseCoordinate): Leaflet." plugin_name
 
-sed -i "s/myplugin/${plugin_name}/g" webpack.*
-sed -i "s/myplugin/${plugin_name}/g" package.json
-sed -i "s/myplugin/${plugin_name}/g" index.html
+sed -i "s/myplugin/${plugin_name,,}/g" webpack.*
 
-mv src/leaflet.myplugin.js src/"leaflet.${plugin_name}.js"
-mv src/leaflet.myplugin.css src/"leaflet.${plugin_name}.css"
+npm_plugin_name=$(echo $plugin_name | sed "s/\./-/g" | sed "s/\s//g")
 
-sed -i "s/mypluginControl/${plugin_name^}/g" src/"leaflet.${plugin_name}.js"
-sed -i "s/mypluginConstructor/${plugin_name}/g" src/"leaflet.${plugin_name}.js"
+sed -i "s/myplugin/${npm_plugin_name,,}/g" package.json
+sed -i "s/myplugin/${plugin_name,,}/g" index.html
+
+mv src/leaflet.myplugin.js src/"leaflet.${plugin_name,,}.js"
+mv src/leaflet.myplugin.css src/"leaflet.${plugin_name,,}.css"
+
+leaflet_namespace=$(echo "${plugin_name^}" | sed "s/[\.-]//g")
+
+sed -i "s/mypluginControl/${leaflet_namespace}/g" src/"leaflet.${plugin_name,,}.js"
+sed -i "s/mypluginConstructor/${leaflet_namespace,,}/g" src/"leaflet.${plugin_name,,}.js"
+sed -i "s/myplugin\.css/leaflet.${plugin_name,,}.css/g" src/"leaflet.${plugin_name,,}.js"
 
 read -p "Plugin Description: " description
 sed -i "s/<template-description>/${description}/g" package.json
@@ -39,9 +45,9 @@ sed -i "s/<YEAR>/${year}/g" LICENSE
 echo "LICENSE UPDATED!"
 echo
 
-echo "======================= INSTALL PKGS ======================="
-echo "| Installing Dependencies and Development Dependencies     |"
-echo "============================================================"
+echo "======================= INSTALL PKGS =============================="
+echo "| Installing Latest Dependencies and Development Dependencies     |"
+echo "==================================================================="
 echo
 echo "Installing @Latest Dev packages ..."
 
@@ -51,7 +57,7 @@ echo "**************************************************"
 echo "*                 Dev packages OK                *"
 echo "**************************************************"
 echo
-echo "Installing Leaflet Package ..."
+echo "Installing Latest Leaflet Package ..."
 
 npm install --save leaflet@latest
 
